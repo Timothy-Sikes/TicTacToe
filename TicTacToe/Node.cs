@@ -6,7 +6,7 @@ using System.Collections;
 
 namespace TicTacToe
 {
-    public class Node
+    public class Node : Heuristic
     {
         private char[][] board; // uses 'x' and 'o' chars to represent the board.
         public int level; // refers to the depth level
