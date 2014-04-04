@@ -7,7 +7,7 @@ namespace TicTacToe
 {
     public static class MaxMin
     {
-        public static void orderChildren(bool iAmX, List<Node> children)
+        public static void orderChildren(bool iAmX, List<Heuristic> children)
         {
             children = children.OrderBy(x => x.getHeuristic()).ToList();
         }
