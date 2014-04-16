@@ -7,6 +7,6 @@ namespace TicTacToe
 {
     public interface Heuristic
     {
-        public int getHeuristic();
+        int getHeuristic();
     }
 }
