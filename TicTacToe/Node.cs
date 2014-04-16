@@ -8,12 +8,12 @@ namespace TicTacToe
 {
     public class Node : Heuristic
     {
-        private char[][] board; // uses 'x' and 'o' chars to represent the board.
+        private char[,] board; // uses 'x' and 'o' chars to represent the board.
         public int level; // refers to the depth level
         public List<Node> children;
         public bool min; // Represents whether or not the node is for min or max.
 
-        public Node(char[][] currentBoard, int currentLevel)
+        public Node(char[,] currentBoard, int currentLevel)
         {
             // Instantiate a node
             board = currentBoard;
@@ -24,6 +24,20 @@ namespace TicTacToe
         public void generateChildren()
         {
             // generates all the possible children of this node.
+
+        }
+
+        public bool xToMove()
+        {
+            int numX = 0;
+            int numO = 0;
+            foreach(char c in board)
+            {
+                if (c == 'x') numX++;
+                else if (c == 'o') numO++;
+            }
+
+            return !(numX > numO);
         }
 
         public int getHeuristic()
