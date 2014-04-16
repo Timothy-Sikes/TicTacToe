@@ -21,10 +21,37 @@ namespace TicTacToe
             generateChildren();
         }
 
-        public void generateChildren()
+        private void generateChildren()
         {
             // generates all the possible children of this node.
+            for (int i = 0; i < Math.Sqrt(board.Length); i++)
+            {
+                for (int j = 0; j < Math.Sqrt(board.Length); j++)
+                {
+                    if(spaceUnused(i, j))
+                    {
+                        Node newChild = CreateCopy();
+                        newChild.level -= 1;
+                        newChild.board[i, j] = newChild.xToMove() ? 'x' : 'o';
+                        children.Add(newChild);
+                    }
+                }
+            }   
+        }
 
+        private bool spaceUnused(int col, int row)
+        {
+            return !(board[col, row] != 'x' || board[col, row] != 'o');
+        }
+
+        //Returns a copy of this node
+        private Node CreateCopy()
+        {
+            //Create a copy of the current board
+            char[,] copy = new char[3, 3];
+            Array.Copy(board, copy, board.Length);
+
+            return new Node(copy, level);
         }
 
         public bool xToMove()
