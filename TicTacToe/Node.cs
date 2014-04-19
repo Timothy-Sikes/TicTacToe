@@ -14,8 +14,9 @@ namespace TicTacToe
         public List<Node> children;
         public bool min; // Represents whether or not the node is for min or max.
         public int alphaBeta;
-        public delegate bool del(int otherAlphaBeta);
-        del better;
+
+        public delegate bool betterDelType(int otherAlphaBeta);
+        betterDelType better;
 
         public Node(char[,] currentBoard, int currentLevel)
         {
@@ -101,10 +102,79 @@ namespace TicTacToe
             return !(numX > numO);
         }
 
+        //Heuristic is inspired by lexicographical orderings
         public int getHeuristic()
         {
-            return 0;
+            return
+                2700 * (justWon() ? 1 : 0)
+                - 900 * (numberOfDiagonalsWithExactly(2, false) + numberOfHorizontalsWithExactly(2, false) + numberOfVerticalsWithExactly(2, false))
+                + 30 * (numberOfDiagonalsWithExactly(2) + numberOfHorizontalsWithExactly(2) + numberOfVerticalsWithExactly(2));
         }
- 
+
+        //Check to see if the player that just moved won
+        public bool justWon()
+        {
+            return (numberOfDiagonalsWithExactly(3) >= 1) || (numberOfVerticalsWithExactly(3) >= 1) || (numberOfHorizontalsWithExactly(3) >= 1);
+        }
+
+        public int numberOfDiagonalsWithExactly(int num, bool forLastPlayerToMove = true)
+        {
+            char testChar = justMovedChar();
+            int inARow1, inARow2; inARow1 = inARow2 = 0;
+            for(int i = 0; i < 3; i++)
+            {
+                if (board[i, i] == testChar) inARow1++;
+                if (board[2 - i, 2 - i] == testChar) inARow2++;
+            }
+            return
+                ((inARow1 == num) ? 1 : 0) +
+                ((inARow2 == num) ? 1 : 0);
+        }
+
+        public int numberOfVerticalsWithExactly(int num, bool forLastPlayerToMove = true)
+        {
+            int returnVal = 0;
+            char testChar = justMovedChar();
+
+            int inARow;
+            for(int i = 0; i < 3; i++)
+            {
+                inARow = 0;
+                for(int j = 0; j < 3; j++)
+                {
+                    if (board[i, j] == testChar) inARow++;
+                }
+                if (inARow == num) returnVal++;
+            }
+            return returnVal;
+        }
+
+        public int numberOfHorizontalsWithExactly(int num, bool forLastPlayerToMove = true)
+        {
+            int returnVal = 0;
+
+            char testChar = justMovedChar();
+
+            int inARow;
+            for (int i = 0; i < 3; i++)
+            {
+                inARow = 0;
+                for (int j = 0; j < 3; j++)
+                {
+                    if (board[j, i] == testChar) inARow++;
+                }
+                if (inARow == num) returnVal++;
+            }
+            return returnVal;
+        }
+        
+        private char justMovedChar(bool forLastPlayerToMove = true)
+        {
+            char testChar;
+            if (!xToMove() && forLastPlayerToMove) testChar = 'x';
+            else testChar = 'o';
+            return testChar;
+        }
+
     }
 }
