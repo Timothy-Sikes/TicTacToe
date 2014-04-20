@@ -64,6 +64,8 @@ namespace TicTacToe
 
         public Node computerMove(int depth)
         {
+            children = new List<Node>();
+            generateChildren();
             setAlphaBetas(depth);
             return
                 (from b in children
