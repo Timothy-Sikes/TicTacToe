@@ -75,6 +75,8 @@ namespace TicTacToe
             generateChildren();
             Node newNode = children.Where(x => x.board[col, row] == (xToMove() ? 'x' : 'o')).First();
             newNode.treatAsRoot = true;
+            if (newNode.gameOver()) return newNode;
+
             return newNode.computerMove(5);
         }
 
@@ -87,6 +89,15 @@ namespace TicTacToe
                  select b).First();
             newNode.treatAsRoot = true;
             return newNode;
+        }
+
+        public bool gameOver()
+        {
+            bool boardFilled =
+                (from space in board.Cast<char>()
+                 where (space != 'x' && space != 'o') //Where space unused
+                 select space).Count() == 0;
+            return boardFilled || justWon();
         }
 
         //updates nodes alpha/beta and recursively updates parent as necessary.
