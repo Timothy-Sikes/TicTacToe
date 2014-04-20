@@ -46,6 +46,21 @@ namespace TicTacToe
             
         }
 
+        public Node playerMove(int col, int row)
+        {
+            return
+                children.Where(x => x.board[col, row] == (board[col, row] = xToMove() ? 'x' : 'o')).First();
+        }
+
+        public Node computerMove(int depth)
+        {
+            setAlphaBetas(depth);
+            return
+                (from b in children
+                 where b.getHeuristic() == (children.Max(x => x.getHeuristic()))
+                 select b).First();
+        }
+
         //updates nodes alpha/beta and recursively updates parent as necessary.
         private void updateAlphaBeta(int val)
         {
