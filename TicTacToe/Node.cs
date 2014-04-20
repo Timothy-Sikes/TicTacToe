@@ -8,12 +8,13 @@ namespace TicTacToe
 {
     public class Node : Heuristic
     {
-        private char[,] board; // uses 'x' and 'o' chars to represent the board.
+        public char[,] board; // uses 'x' and 'o' chars to represent the board.
         public int level; // refers to the depth level
         public Node parent;
         public List<Node> children;
         public bool min; // Represents whether or not the node is for min or max.
         public int alphaBeta;
+        public int numGeneratedDescendants = 0;
 
         public delegate bool betterDelType(int otherAlphaBeta);
         betterDelType better;
@@ -24,7 +25,6 @@ namespace TicTacToe
             parent = null;
             if (xToMove()) better = x => x > alphaBeta;
             else better = x => x < alphaBeta;
-            generateChildren();
         }
 
         public Node(char[,] currentBoard, int currentLevel)
@@ -35,12 +35,12 @@ namespace TicTacToe
             //I assume player  controlling x is trying to maximize
             if(xToMove()) better = x => x > alphaBeta;
             else better = x => x < alphaBeta;
-            generateChildren();
         }
 
         //Delves down to a depth of "depth" to set aplha/beta values
         public void setAlphaBetas(int depth)
         {
+            if (!(depth == 0 || justWon())) generateChildren();
             foreach(Node c in children)
             {
                 //Once the current node becomes an unfeasible choice for its parent then we no longer
@@ -65,7 +65,6 @@ namespace TicTacToe
         public Node computerMove(int depth)
         {
             children = new List<Node>();
-            generateChildren();
             setAlphaBetas(depth);
             return
                 (from b in children
