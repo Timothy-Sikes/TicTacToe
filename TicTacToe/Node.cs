@@ -9,7 +9,6 @@ namespace TicTacToe
     public class Node : Heuristic
     {
         public char[,] board; // uses 'x' and 'o' chars to represent the board.
-        public int level; // refers to the depth level
         public Node parent;
         public List<Node> children;
         public bool min; // Represents whether or not the node is for min or max.
@@ -18,6 +17,7 @@ namespace TicTacToe
         private bool treatAsRoot;
 
         public delegate bool betterDelType(int otherAlphaBeta);
+        public bool debugging = true;
 
         public Node()
         {
@@ -26,11 +26,10 @@ namespace TicTacToe
             treatAsRoot = true;
         }
 
-        public Node(char[,] currentBoard, int currentLevel)
+        public Node(char[,] currentBoard)
         {
             // Instantiate a node
             board = currentBoard;
-            level = currentLevel;
             //I assume player  controlling x is trying to maximize
             
         }
@@ -72,6 +71,7 @@ namespace TicTacToe
 
         public Node playerMove(int col, int row)
         {
+            
             generateChildren();
             Node newNode = children.Where(x => x.board[col, row] == (xToMove() ? 'x' : 'o')).First();
             newNode.treatAsRoot = true;
@@ -95,7 +95,11 @@ namespace TicTacToe
             alphaBeta = val;
 
             //Recursively update ancestors
-            if(parent.better(alphaBeta)) updateAlphaBeta(alphaBeta);
+            if (parent != null && parent.better(alphaBeta))
+            {
+                parent.alphaBeta = alphaBeta;
+                parent.updateAlphaBeta(alphaBeta);
+            }
         }
 
         private void generateChildren()
@@ -109,7 +113,6 @@ namespace TicTacToe
                     if(spaceUnused(i, j))
                     {
                         Node newChild = CreateCopy();
-                        newChild.level -= 1;
                         newChild.board[i, j] = newChild.xToMove() ? 'x' : 'o';
                         newChild.parent = this;
                         newChild.treatAsRoot = false;
@@ -131,7 +134,7 @@ namespace TicTacToe
             char[,] copy = new char[3, 3];
             Array.Copy(board, copy, board.Length);
 
-            return new Node(copy, level);
+            return new Node(copy);
         }
 
         public bool xToMove()
