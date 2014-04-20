@@ -158,6 +158,10 @@ namespace TicTacToe
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -173,7 +177,7 @@ namespace TicTacToe
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(318, 28);
+            this.label1.Location = new System.Drawing.Point(318, 27);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(91, 13);
             this.label1.TabIndex = 1;
@@ -188,16 +192,47 @@ namespace TicTacToe
             this.label2.TabIndex = 2;
             this.label2.Text = "0";
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(321, 50);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(54, 17);
+            this.checkBox1.TabIndex = 3;
+            this.checkBox1.Text = "Trace";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(321, 86);
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDown1.TabIndex = 4;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(318, 70);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(65, 13);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Depth Level";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(505, 266);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.numericUpDown1);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.panel1);
             this.Name = "Form1";
             this.Text = "Form1";
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -208,6 +243,9 @@ namespace TicTacToe
         private Panel panel1;
         private Label label1;
         private Label label2;
+        private CheckBox checkBox1;
+        private NumericUpDown numericUpDown1;
+        private Label label3;
     }
 }
 
