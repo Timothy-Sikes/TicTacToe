@@ -42,10 +42,10 @@ namespace TicTacToe
             var selection = getBox(new Point(e.X, e.Y));
 
             //MessageBox.Show(messageBoxCS.ToString(), "MouseClick Event");
-            char[,] currentBoard = node.board;
+            //char[,] currentBoard = node.board;
 
-            if (validateMove(selection, node.board))
-                currentBoard[selection.Item1, selection.Item2] = 'x';
+           // if (validateMove(selection, node.board))
+             //   currentBoard[selection.Item1, selection.Item2] = 'x';
 
             node = node.playerMove(selection.Item1, selection.Item2);
         }

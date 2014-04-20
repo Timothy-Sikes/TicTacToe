@@ -17,14 +17,12 @@ namespace TicTacToe
         public int numGeneratedDescendants = 0;
 
         public delegate bool betterDelType(int otherAlphaBeta);
-        betterDelType better;
+        private betterDelType better;
 
         public Node()
         {
             board = new char[3, 3];
             parent = null;
-            if (xToMove()) better = x => x > alphaBeta;
-            else better = x => x < alphaBeta;
         }
 
         public Node(char[,] currentBoard, int currentLevel)
@@ -33,8 +31,20 @@ namespace TicTacToe
             board = currentBoard;
             level = currentLevel;
             //I assume player  controlling x is trying to maximize
-            if(xToMove()) better = x => x > alphaBeta;
-            else better = x => x < alphaBeta;
+            
+        }
+
+        private betterDelType isBetter
+        {
+            get
+            {
+                if(better == null)
+                {
+                    if (xToMove()) better = x => x > alphaBeta;
+                    else better = x => x < alphaBeta;
+                }
+                return better;
+            }
         }
 
         //Delves down to a depth of "depth" to set aplha/beta values
@@ -58,13 +68,13 @@ namespace TicTacToe
 
         public Node playerMove(int col, int row)
         {
-            return
-                children.Where(x => x.board[col, row] == (board[col, row] = xToMove() ? 'x' : 'o')).First();
+            board[col, row] = (xToMove() ? 'x' : 'o');
+            computerMove(5);
+            return this;
         }
 
         public Node computerMove(int depth)
         {
-            children = new List<Node>();
             setAlphaBetas(depth);
             return
                 (from b in children
@@ -83,6 +93,7 @@ namespace TicTacToe
 
         private void generateChildren()
         {
+            children = new List<Node>();
             // generates all the possible children of this node.
             for (int i = 0; i < Math.Sqrt(board.Length); i++)
             {
@@ -102,7 +113,7 @@ namespace TicTacToe
 
         private bool spaceUnused(int col, int row)
         {
-            return !(board[col, row] != 'x' || board[col, row] != 'o');
+            return !(board[col, row] == 'x' || board[col, row] == 'o');
         }
 
         //Returns a copy of this node
