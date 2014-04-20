@@ -59,7 +59,7 @@ namespace TicTacToe
             {
                 //Once the current node becomes an unfeasible choice for its parent then we no longer
                 //need to do update alpha/betas. This is the alpha beta pruning bit
-                if( !parent.better(alphaBeta) ) return;
+                //if( !parent.better(alphaBeta) ) return;
 
                 //If this is the last layer to do stuff with then we should
                 //set the alpha/beta to the heuristic value
