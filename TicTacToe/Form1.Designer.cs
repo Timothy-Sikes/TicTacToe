@@ -41,44 +41,84 @@ namespace TicTacToe
             MessageBox.Show(messageBoxCS.ToString(), "MouseClick Event");
         }
 
-        public String getBox(Point p)
+        public Tuple<int, int> getBox(Point p)
         {
             if (p.X < top_left.X && p.Y < top_left.Y)
-                return "TL";
+                return Tuple.Create(0, 0);
             else if (p.X < top_left.X && p.Y > top_left.Y && p.Y < bottom_left.Y)
-                return "ML";
+                return Tuple.Create(0, 1);
             else if (p.X < top_left.X && p.Y > bottom_left.Y)
-                return "BL";
+                return Tuple.Create(0, 2);
 
             else if (p.X > top_left.X && p.X < top_right.X && p.Y < top_right.Y)
-                return "MT";
+                return Tuple.Create(1, 0);
             else if (p.X > top_left.X && p.X < top_right.X && p.Y > top_right.Y && p.Y < bottom_left.Y)
-                return "MM";
+                return Tuple.Create(1, 1);
             else if (p.X > top_left.X && p.X < top_right.X && p.Y > bottom_right.Y)
-                return "MB";
+                return Tuple.Create(1, 2);
 
             else if (p.X > top_right.X && p.Y < top_right.Y)
-                return "TR";
+                return Tuple.Create(2, 0);
             else if (p.X > top_right.X && p.Y > top_right.Y && p.Y < bottom_right.Y)
-                return "MR";
+                return Tuple.Create(2, 1);
             else if (p.X > top_right.X && p.Y > bottom_right.Y)
-                return "BR";
+                return Tuple.Create(2, 2);
 
-            return "ERROR";
+            return Tuple.Create(3, 3);
         }
 
-        private void drawX(Point p, Graphics g)
+        private void drawX(int x, int y, Graphics g)
         {
             Pen blackpen = new Pen(Color.Black, 2);
-            g.DrawLine(blackpen, new Point(p.X - 18, p.Y - 18), new Point(p.X + 18, p.Y + 18));
-            g.DrawLine(blackpen, new Point(p.X - 18, p.Y + 18), new Point(p.X + 18, p.Y - 18));
+            int startLocationX = 30;
+            int startLocationY = 30;
+            x += 1;
+            y += 1;
+
+            drawX_atOrigin(x * 30 + (30 * (x - 1)), y * 30 + (20 * (y - 1)), g);
         }
 
-        private void drawO(Point p, Graphics g)
+        private void drawO(int x, int y, Graphics g)
         {
             Pen blackpen = new Pen(Color.Black, 2);
-            g.DrawEllipse(blackpen, p.X, p.Y, 10, 10);
+            int startLocationX = 30;
+            int startLocationY = 30;
+            x += 1;
+            y += 1;
+
+            drawO_atOrigin(x * 30 + (30 * (x - 1)), y * 30 + (20 * (y - 1)), g);
         }
+
+        private void drawX_atOrigin(int x, int y, Graphics g)
+        {
+            Pen blackpen = new Pen(Color.Black, 2);
+
+            g.DrawLine(blackpen, new Point(x, y), new Point(x + 30, y + 30));
+            g.DrawLine(blackpen, new Point(x, y + 30), new Point(x + 30, y));
+        }
+
+        private void drawO_atOrigin(int x, int y, Graphics g)
+        {
+            Pen blackpen = new Pen(Color.Black, 2);
+
+            g.DrawEllipse(blackpen, x, y, 40, 40);
+        }
+
+        private void drawBoard(char[,] board, Graphics g)
+        {
+            Pen blackpen = new Pen(Color.Black, 2);
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (board[i, j] == 'x')
+                        drawX(i, j, g);
+                    else
+                        drawO(i, j, g);
+                }
+            }
+        }
+
 
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
@@ -90,23 +130,15 @@ namespace TicTacToe
             g.DrawLine(blackpen, new Point(top_right.X, top_right.Y - offset), new Point(bottom_right.X, bottom_right.Y + offset));
             g.DrawLine(blackpen, new Point(top_left.X - offset, top_left.Y), new Point(top_right.X + offset, top_right.Y));
             g.DrawLine(blackpen, new Point(bottom_left.X - offset, bottom_left.Y), new Point(bottom_right.X + offset, bottom_right.Y));
-            drawX(bottom_left, g);
+            drawO(2,2, g);
             g.Dispose();
-        }
-
-        public void drawBoard(char[,] board, Graphics g)
-        {
-            if (board[0, 0] == 'x')
-                drawX(new Point(top_left.X - 20, top_left.Y - 20), g);
-            else if (board[0, 0] == 'y')
-                drawO(new Point(top_left.X - 20, top_left.Y - 20), g);
         }
 
         #region Windows Form Designer generated code
 
         /// <summary>
         /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
+        /// the contents of this method with the code editor.  
         /// </summary>
         private void InitializeComponent()
         {
