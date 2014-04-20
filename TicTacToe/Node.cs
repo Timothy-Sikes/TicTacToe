@@ -15,14 +15,15 @@ namespace TicTacToe
         public bool min; // Represents whether or not the node is for min or max.
         public int alphaBeta;
         public int numGeneratedDescendants = 0;
+        private bool treatAsRoot;
 
         public delegate bool betterDelType(int otherAlphaBeta);
-        private betterDelType better;
 
         public Node()
         {
             board = new char[3, 3];
             parent = null;
+            treatAsRoot = true;
         }
 
         public Node(char[,] currentBoard, int currentLevel)
@@ -34,16 +35,19 @@ namespace TicTacToe
             
         }
 
-        private betterDelType isBetter
+        private betterDelType better
         {
             get
             {
+                if (treatAsRoot) return x => true;
+
+                betterDelType b = x => false;
                 if(better == null)
                 {
-                    if (xToMove()) better = x => x > alphaBeta;
-                    else better = x => x < alphaBeta;
+                    if (xToMove()) b = x => x > alphaBeta;
+                    else b = x => x < alphaBeta;
                 }
-                return better;
+                return b;
             }
         }
 
@@ -68,18 +72,21 @@ namespace TicTacToe
 
         public Node playerMove(int col, int row)
         {
-            board[col, row] = (xToMove() ? 'x' : 'o');
-            computerMove(5);
-            return this;
+            generateChildren();
+            Node newNode = children.Where(x => x.board[col, row] == (xToMove() ? 'x' : 'o')).First();
+            newNode.treatAsRoot = true;
+            return newNode.computerMove(5);
         }
 
         public Node computerMove(int depth)
         {
             setAlphaBetas(depth);
-            return
+            Node newNode =
                 (from b in children
                  where b.getHeuristic() == (children.Max(x => x.getHeuristic()))
                  select b).First();
+            newNode.treatAsRoot = true;
+            return newNode;
         }
 
         //updates nodes alpha/beta and recursively updates parent as necessary.
@@ -105,6 +112,7 @@ namespace TicTacToe
                         newChild.level -= 1;
                         newChild.board[i, j] = newChild.xToMove() ? 'x' : 'o';
                         newChild.parent = this;
+                        newChild.treatAsRoot = false;
                         children.Add(newChild);
                     }
                 }
