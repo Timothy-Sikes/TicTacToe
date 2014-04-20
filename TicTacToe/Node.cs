@@ -39,7 +39,7 @@ namespace TicTacToe
 
                 //If this is the last layer to do stuff with then we should
                 //set the alpha/beta to the heuristic value
-                if(depth == 0) updateAlphaBeta(getHeuristic());
+                if(depth == 0 || justWon()) updateAlphaBeta(getHeuristic());
                 //otherwise recursively call setAlphaBetas on children with a decreased value of depth
                 else setAlphaBetas(depth - 1);
             }
