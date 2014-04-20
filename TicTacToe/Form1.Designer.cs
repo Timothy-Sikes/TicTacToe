@@ -42,12 +42,9 @@ namespace TicTacToe
             var selection = getBox(new Point(e.X, e.Y));
 
             //MessageBox.Show(messageBoxCS.ToString(), "MouseClick Event");
-            //char[,] currentBoard = node.board;
-
-           // if (validateMove(selection, node.board))
-             //   currentBoard[selection.Item1, selection.Item2] = 'x';
 
             node = node.playerMove(selection.Item1, selection.Item2);
+            this.panel1.Invalidate();
         }
 
         public Tuple<int, int> getBox(Point p)
@@ -142,6 +139,7 @@ namespace TicTacToe
             g.DrawLine(blackpen, new Point(top_left.X - offset, top_left.Y), new Point(top_right.X + offset, top_right.Y));
             g.DrawLine(blackpen, new Point(bottom_left.X - offset, bottom_left.Y), new Point(bottom_right.X + offset, bottom_right.Y));
 
+            Debug.WriteLine("DRAWING");
             drawBoard(node.board, g);
 
             g.Dispose();
