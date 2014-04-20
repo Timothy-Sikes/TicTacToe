@@ -15,6 +15,8 @@ namespace TicTacToe
         Point bottom_left = new Point(75, 125);
         Point bottom_right = new Point(150, 125);
 
+        Node node = new Node();
+
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -35,10 +37,17 @@ namespace TicTacToe
 
         private void panel1_MouseClick(Object sender, MouseEventArgs e)
         {
-
             System.Text.StringBuilder messageBoxCS = new System.Text.StringBuilder();
             messageBoxCS.Append(getBox(new Point(e.X, e.Y)));
-            MessageBox.Show(messageBoxCS.ToString(), "MouseClick Event");
+            var selection = getBox(new Point(e.X, e.Y));
+
+            //MessageBox.Show(messageBoxCS.ToString(), "MouseClick Event");
+            char[,] currentBoard = node.board;
+
+            if (validateMove(selection, node.board))
+                currentBoard[selection.Item1, selection.Item2] = 'x';
+
+            node = node.playerMove(selection.Item1, selection.Item2);
         }
 
         public Tuple<int, int> getBox(Point p)
@@ -70,8 +79,6 @@ namespace TicTacToe
         private void drawX(int x, int y, Graphics g)
         {
             Pen blackpen = new Pen(Color.Black, 2);
-            int startLocationX = 30;
-            int startLocationY = 30;
             x += 1;
             y += 1;
 
@@ -81,8 +88,6 @@ namespace TicTacToe
         private void drawO(int x, int y, Graphics g)
         {
             Pen blackpen = new Pen(Color.Black, 2);
-            int startLocationX = 30;
-            int startLocationY = 30;
             x += 1;
             y += 1;
 
@@ -113,12 +118,18 @@ namespace TicTacToe
                 {
                     if (board[i, j] == 'x')
                         drawX(i, j, g);
-                    else
+                    else if (board[i, j] == 'o')
                         drawO(i, j, g);
                 }
             }
         }
 
+        private bool validateMove(Tuple<int, int> location, char[,] board)
+        {
+            if (board[location.Item1, location.Item2] != 'x' || board[location.Item1, location.Item2] != 'o')
+                return true;
+            return false;
+        }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
@@ -130,7 +141,9 @@ namespace TicTacToe
             g.DrawLine(blackpen, new Point(top_right.X, top_right.Y - offset), new Point(bottom_right.X, bottom_right.Y + offset));
             g.DrawLine(blackpen, new Point(top_left.X - offset, top_left.Y), new Point(top_right.X + offset, top_right.Y));
             g.DrawLine(blackpen, new Point(bottom_left.X - offset, bottom_left.Y), new Point(bottom_right.X + offset, bottom_right.Y));
-            drawO(2,2, g);
+
+            drawBoard(node.board, g);
+
             g.Dispose();
         }
 
@@ -143,6 +156,8 @@ namespace TicTacToe
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // panel1
@@ -153,23 +168,46 @@ namespace TicTacToe
             this.panel1.Size = new System.Drawing.Size(282, 264);
             this.panel1.TabIndex = 0;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
-            this.panel1.MouseClick += new MouseEventHandler(panel1_MouseClick);
+            this.panel1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseClick);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(318, 28);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(91, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Nodes Generated";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(416, 27);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(13, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "0";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(283, 266);
+            this.ClientSize = new System.Drawing.Size(505, 266);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.panel1);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private Panel panel1;
+        private Label label1;
+        private Label label2;
     }
 }
 
