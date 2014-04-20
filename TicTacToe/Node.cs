@@ -18,6 +18,15 @@ namespace TicTacToe
         public delegate bool betterDelType(int otherAlphaBeta);
         betterDelType better;
 
+        public Node()
+        {
+            board = new char[3, 3];
+            parent = null;
+            if (xToMove()) better = x => x > alphaBeta;
+            else better = x => x < alphaBeta;
+            generateChildren();
+        }
+
         public Node(char[,] currentBoard, int currentLevel)
         {
             // Instantiate a node
@@ -25,6 +34,7 @@ namespace TicTacToe
             level = currentLevel;
             //I assume player  controlling x is trying to maximize
             if(xToMove()) better = x => x > alphaBeta;
+            else better = x => x < alphaBeta;
             generateChildren();
         }
 
