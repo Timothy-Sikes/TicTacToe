@@ -139,17 +139,8 @@ namespace TicTacToe
             g.DrawLine(blackpen, new Point(top_left.X - offset, top_left.Y), new Point(top_right.X + offset, top_right.Y));
             g.DrawLine(blackpen, new Point(bottom_left.X - offset, bottom_left.Y), new Point(bottom_right.X + offset, bottom_right.Y));
 
-            Debug.WriteLine("DRAWING: WIN " + node.justWon() + " WIN? " + node.justWon(false) + " Game over? " + node.gameOver());
-
+            Debug.WriteLine("DRAWING");
             drawBoard(node.board, g);
-            if (node.justWon() || node.justWon(false) || node.gameOver())
-            {
-                string winner = "o";
-                if (node.justWon() && node.justMovedChar() == 'x')
-                    winner = "x";
-                MessageBoxButtons button = MessageBoxButtons.OK;
-                MessageBox.Show(winner + " Wins!", "Game has ended", button);
-            }
 
             g.Dispose();
         }
