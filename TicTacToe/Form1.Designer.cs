@@ -37,13 +37,9 @@ namespace TicTacToe
 
         private void panel1_MouseClick(Object sender, MouseEventArgs e)
         {
-            System.Text.StringBuilder messageBoxCS = new System.Text.StringBuilder();
-            messageBoxCS.Append(getBox(new Point(e.X, e.Y)));
             var selection = getBox(new Point(e.X, e.Y));
-
-            //MessageBox.Show(messageBoxCS.ToString(), "MouseClick Event");
-
-            node = node.playerMove(selection.Item1, selection.Item2);
+            if (validateMove(selection, node.board))
+                node = node.playerMove(selection.Item1, selection.Item2);
             this.panel1.Invalidate();
         }
 
@@ -123,7 +119,7 @@ namespace TicTacToe
 
         private bool validateMove(Tuple<int, int> location, char[,] board)
         {
-            if (board[location.Item1, location.Item2] != 'x' || board[location.Item1, location.Item2] != 'o')
+            if (board[location.Item1, location.Item2] != 'x' && board[location.Item1, location.Item2] != 'o')
                 return true;
             return false;
         }
