@@ -88,9 +88,9 @@ namespace TicTacToe
                     //otherwise recursively call setAlphaBetas on children with a decreased value of depth
                     else c.setAlphaBetas(depth - 1);
 
-                                        //Once the current node becomes an unfeasible choice for its parent then we no longer
+                    //Once the current node becomes an unfeasible choice for its parent then we no longer
                     //need to do update alpha/betas. This is the alpha beta pruning bit
-                    if( !parent.better(alphaBeta) ) return;
+                    if( !(parent.better(alphaBeta) || parent.alphaBeta == alphaBeta)  ) return;
                 }
                 if (parent.better(alphaBeta)) parent.alphaBeta = alphaBeta;
             }
