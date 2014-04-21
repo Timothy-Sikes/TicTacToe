@@ -110,7 +110,7 @@ namespace TicTacToe
             {
                 newNode =
                     (from b in children
-                     where b.getHeuristic() == (children.Min(x => x.getHeuristic()))
+                     where b.alphaBeta == (children.Min(x => x.alphaBeta))
                      select b).First();
             }
             else
