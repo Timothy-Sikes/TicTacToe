@@ -142,17 +142,26 @@ namespace TicTacToe
             Debug.WriteLine("DRAWING: WIN " + node.justWon() + " WIN? " + node.justWon(false) + " Game over? " + node.gameOver());
 
             drawBoard(node.board, g);
-            if (node.justWon() || node.justWon(false))
+            string text = "";
+            if (node.justWon() || node.justWon(false) || node.gameOver())
             {
-                string winner = "o";
-                if (node.justWon() && node.justMovedChar() == 'x')
-                    winner = "x";
-                MessageBoxButtons button = MessageBoxButtons.OK;
-                MessageBox.Show(winner + " Wins!", "Game has ended", button);
-            } else if(node.gameOver())
-            {
-                MessageBoxButtons button = MessageBoxButtons.OK;
-                MessageBox.Show("It was a draw!", "Game has ended", button);
+                if (node.justWon() || node.justWon(false))
+                {
+                    string winner = "o";
+                    if (node.justWon() && node.justMovedChar() == 'x')
+                        winner = "x";
+                    text = winner + " Wins!";
+                }
+                else
+                    text = "It was a draw";
+
+                MessageBoxButtons button = MessageBoxButtons.YesNo;
+                DialogResult result = MessageBox.Show(text + "\n Play again?", "Game has ended", button);
+                if (result == DialogResult.Yes)
+                    node = new Node();
+                else
+                    Application.Exit();
+                panel1.Invalidate();
             }
 
             g.Dispose();
