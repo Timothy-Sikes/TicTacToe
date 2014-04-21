@@ -81,23 +81,35 @@ namespace TicTacToe
                 generateChildren();
                 foreach(Node c in children)
                 {
-                    //Once the current node becomes an unfeasible choice for its parent then we no longer
-                    //need to do update alpha/betas. This is the alpha beta pruning bit
-                    //if( !parent.better(alphaBeta) ) return;
-
                     //If this is the last layer to do stuff with then we should
                     //set the alpha/beta to the heuristic value
                     if(depth == 1 || gameOver()) c.updateMinMax(c.getHeuristic());
+
                     //otherwise recursively call setAlphaBetas on children with a decreased value of depth
                     else c.setAlphaBetas(depth - 1);
+
+                                        //Once the current node becomes an unfeasible choice for its parent then we no longer
+                    //need to do update alpha/betas. This is the alpha beta pruning bit
+                    if( !parent.better(alphaBeta) ) return;
                 }
-                alphaBeta = selectBestChild().alphaBeta;
+                if (parent.better(alphaBeta)) parent.alphaBeta = alphaBeta;
             }
             else updateMinMax(getHeuristic());
             
         }
 
         // This function accepts the player's move, and then calculates the computer's response.
+        //updates nodes alpha/beta and recursively updates parent as necessary.
+        private void updateMinMax(int val)
+        {
+            alphaBeta = val;
+            if (parent != null && parent.better(alphaBeta))
+            {
+                parent.alphaBeta = val;
+            }
+            nodesVisited++;
+        }
+
         public Node playerMove(int col, int row, int depth = 9)
         {
             nodesVisited = 0;
@@ -165,14 +177,6 @@ namespace TicTacToe
             return boardFilled || justWon();
         }
 
-        //updates nodes alpha/beta and recursively updates parent as necessary.
-        private void updateMinMax(int val)
-        {
-            alphaBeta = val;
-            nodesVisited++;
-        }
-
-        // This function generates all the possible children for this node.
         private void generateChildren()
         {
             children = new List<Node>();
