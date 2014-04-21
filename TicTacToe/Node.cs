@@ -291,7 +291,7 @@ namespace TicTacToe
                 for (int j = 0; j < 3; j++)
                 {
                     if (board[j, i] == testChar) inARow++;
-                    else if (!spaceUnused(i, j)) inARow--;
+                    else if (!spaceUnused(j, i)) inARow--;
                 }
                 if (inARow == num) returnVal++;
             }
