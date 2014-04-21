@@ -259,8 +259,11 @@ namespace TicTacToe
         
         public char justMovedChar(bool forLastPlayerToMove = true)
         {
+            bool x;
+            if(!forLastPlayerToMove)
+                x =  xToMove();
             char testChar;
-            if (!xToMove() && forLastPlayerToMove) testChar = 'x';
+            if ( (xToMove() && !forLastPlayerToMove) || (!xToMove() && forLastPlayerToMove) ) testChar = 'x';
             else testChar = 'o';
             return testChar;
         }
