@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 
+using System.Diagnostics;
+
 namespace TicTacToe
 {
     public class Node : Heuristic
@@ -22,6 +24,13 @@ namespace TicTacToe
         public Node()
         {
             board = new char[3, 3];
+            for (int i = 0; i < 3; i++)
+            {
+                for(int j = 0; j < 3; j++)
+                {
+                    board[i, j] = '-';
+                }
+            }
             parent = null;
             treatAsRoot = true;
         }
@@ -50,6 +59,20 @@ namespace TicTacToe
             }
         }
 
+        void debugDisplayNode()
+        {
+            Debug.WriteLine("------------------");
+            for(int col = 0; col < 3; col++)
+            {
+                for(int row = 0; row < 3; row++)
+                {
+                    Debug.Write(board[row, col]);
+                }
+                Debug.WriteLine("");
+            }
+            Debug.WriteLine("Value: " + alphaBeta);
+        }
+
         //Delves down to a depth of "depth" to set aplha/beta values
         public void setAlphaBetas(int depth)
         {
@@ -62,14 +85,14 @@ namespace TicTacToe
 
                 //If this is the last layer to do stuff with then we should
                 //set the alpha/beta to the heuristic value
-                if(depth == 0 || justWon()) updateAlphaBeta(getHeuristic());
+                if(depth == 1 || justWon()) c.updateAlphaBeta(c.getHeuristic());
                 //otherwise recursively call setAlphaBetas on children with a decreased value of depth
                 else setAlphaBetas(depth - 1);
             }
             
         }
 
-        public Node playerMove(int col, int row)
+        public Node playerMove(int col, int row, int depth = 5)
         {
             
             generateChildren();
@@ -77,7 +100,7 @@ namespace TicTacToe
             newNode.treatAsRoot = true;
             if (newNode.gameOver()) return newNode;
 
-            return newNode.computerMove(5);
+            return newNode.computerMove(depth);
         }
 
         public Node computerMove(int depth)
@@ -87,6 +110,10 @@ namespace TicTacToe
                 (from b in children
                  where b.getHeuristic() == (children.Max(x => x.getHeuristic()))
                  select b).First();
+            foreach(Node c in children)
+            {
+                c.debugDisplayNode();
+            }
             newNode.treatAsRoot = true;
             return newNode;
         }
@@ -165,9 +192,10 @@ namespace TicTacToe
         public int getHeuristic()
         {
             return
-                2700 * (justWon() ? 1 : 0)
+                (xToMove() ? -1 : 1) *
+                (2700 * (justWon() ? 1 : 0)
                 - 900 * (numberOfDiagonalsWithExactly(2, false) + numberOfHorizontalsWithExactly(2, false) + numberOfVerticalsWithExactly(2, false))
-                + 30 * (numberOfDiagonalsWithExactly(2) + numberOfHorizontalsWithExactly(2) + numberOfVerticalsWithExactly(2));
+                + 30 * (numberOfDiagonalsWithExactly(2) + numberOfHorizontalsWithExactly(2) + numberOfVerticalsWithExactly(2)));
         }
 
         //Check to see if the player that just moved won
