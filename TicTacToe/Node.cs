@@ -14,11 +14,11 @@ namespace TicTacToe
         public Node parent;
         public List<Node> children;
         public bool min; // Represents whether or not the node is for min or max.
-        public int alphaBeta;
+        public int? alphaBeta;
         public int numGeneratedDescendants = 0;
         private bool treatAsRoot;
 
-        public delegate bool betterDelType(int otherAlphaBeta);
+        public delegate bool betterDelType(int? otherAlphaBeta);
         public bool debugging = true;
 
         public Node()
@@ -48,8 +48,8 @@ namespace TicTacToe
             get
             {
                 betterDelType b;
-                if (xToMove()) b = x => x > alphaBeta;
-                else b = x => x < alphaBeta;
+                if (xToMove()) b = x => (alphaBeta == null)? true : x > alphaBeta;
+                else b = x => (alphaBeta == null) ? true : x < alphaBeta;
                 return b;
             }
         }
@@ -143,12 +143,12 @@ namespace TicTacToe
             alphaBeta = val;
             bool pbetter = parent.better(alphaBeta);
             bool pxtomove = parent.xToMove();
-            int pval = parent.alphaBeta;
+            int? pval = parent.alphaBeta;
 
             //Recursively update ancestors
             if (parent != null && !treatAsRoot && parent.better(alphaBeta))
             {
-                parent.updateAlphaBeta(alphaBeta);
+                parent.updateAlphaBeta((int)alphaBeta);
             }
         }
 
@@ -166,7 +166,7 @@ namespace TicTacToe
                         newChild.board[i, j] = newChild.xToMove() ? 'x' : 'o';
                         newChild.parent = this;
                         newChild.treatAsRoot = false;
-                        newChild.alphaBeta = -1;
+                        //newChild.alphaBeta = -1;
                         children.Add(newChild);
                     }
                 }
