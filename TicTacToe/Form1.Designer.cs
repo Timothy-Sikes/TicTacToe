@@ -35,17 +35,68 @@ namespace TicTacToe
             base.Dispose(disposing);
         }
 
-        private void panel1_MouseClick(Object sender, MouseEventArgs e)
+        // Draw an X at the indicated location on the board.
+        private void drawX(int x, int y, Graphics g)
         {
-            var selection = getBox(new Point(e.X, e.Y));
-            if (validateMove(selection, node.board))
-                node = node.playerMove(selection.Item1, selection.Item2);
-            numNodesLabel.Text = "" + Node.nodesVisited;
-            this.numNodesLabel.Invalidate();
+            Pen blackpen = new Pen(Color.Black, 2);
+            x += 1;
+            y += 1;
 
-            this.panel1.Invalidate();
+            drawX_atOrigin(x * 30 + (30 * (x - 1)), y * 30 + (20 * (y - 1)), g);
         }
 
+        // Draw an O at the indicated location on the board.
+        private void drawO(int x, int y, Graphics g)
+        {
+            Pen blackpen = new Pen(Color.Black, 2);
+            x += 1;
+            y += 1;
+
+            drawO_atOrigin(x * 30 + (30 * (x - 1)), y * 30 + (20 * (y - 1)), g);
+        }
+
+        // This is a utility function to draw X at the specified coordinates.
+        private void drawX_atOrigin(int x, int y, Graphics g)
+        {
+            Pen blackpen = new Pen(Color.Black, 2);
+
+            g.DrawLine(blackpen, new Point(x, y), new Point(x + 30, y + 30));
+            g.DrawLine(blackpen, new Point(x, y + 30), new Point(x + 30, y));
+        }
+
+        // This is a utility function to draw an O at the specified coordinates.
+        private void drawO_atOrigin(int x, int y, Graphics g)
+        {
+            Pen blackpen = new Pen(Color.Black, 2);
+
+            g.DrawEllipse(blackpen, x, y, 40, 40);
+        }
+
+        // This takes a board and draws the appropriate Xs and Os.
+        private void drawBoard(char[,] board, Graphics g)
+        {
+            Pen blackpen = new Pen(Color.Black, 2);
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (board[i, j] == 'x')
+                        drawX(i, j, g);
+                    else if (board[i, j] == 'o')
+                        drawO(i, j, g);
+                }
+            }
+        }
+
+        // This function ensures that the move made is valid.
+        private bool validateMove(Tuple<int, int> location, char[,] board)
+        {
+            if (board[location.Item1, location.Item2] != 'x' && board[location.Item1, location.Item2] != 'o')
+                return true;
+            return false;
+        }
+
+        // This function returns a coordinate for the tic tac toe board based upon the form's clicked point.
         public Tuple<int, int> getBox(Point p)
         {
             if (p.X < top_left.X && p.Y < top_left.Y)
@@ -72,61 +123,19 @@ namespace TicTacToe
             return Tuple.Create(3, 3);
         }
 
-        private void drawX(int x, int y, Graphics g)
+        // This function handles the mouse click, calls the function to get the computer's move, then updates the board.
+        private void panel1_MouseClick(Object sender, MouseEventArgs e)
         {
-            Pen blackpen = new Pen(Color.Black, 2);
-            x += 1;
-            y += 1;
+            var selection = getBox(new Point(e.X, e.Y));
+            if (validateMove(selection, node.board))
+                node = node.playerMove(selection.Item1, selection.Item2);
+            numNodesLabel.Text = "" + Node.nodesVisited;
+            this.numNodesLabel.Invalidate();
 
-            drawX_atOrigin(x * 30 + (30 * (x - 1)), y * 30 + (20 * (y - 1)), g);
+            this.panel1.Invalidate();
         }
 
-        private void drawO(int x, int y, Graphics g)
-        {
-            Pen blackpen = new Pen(Color.Black, 2);
-            x += 1;
-            y += 1;
-
-            drawO_atOrigin(x * 30 + (30 * (x - 1)), y * 30 + (20 * (y - 1)), g);
-        }
-
-        private void drawX_atOrigin(int x, int y, Graphics g)
-        {
-            Pen blackpen = new Pen(Color.Black, 2);
-
-            g.DrawLine(blackpen, new Point(x, y), new Point(x + 30, y + 30));
-            g.DrawLine(blackpen, new Point(x, y + 30), new Point(x + 30, y));
-        }
-
-        private void drawO_atOrigin(int x, int y, Graphics g)
-        {
-            Pen blackpen = new Pen(Color.Black, 2);
-
-            g.DrawEllipse(blackpen, x, y, 40, 40);
-        }
-
-        private void drawBoard(char[,] board, Graphics g)
-        {
-            Pen blackpen = new Pen(Color.Black, 2);
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    if (board[i, j] == 'x')
-                        drawX(i, j, g);
-                    else if (board[i, j] == 'o')
-                        drawO(i, j, g);
-                }
-            }
-        }
-
-        private bool validateMove(Tuple<int, int> location, char[,] board)
-        {
-            if (board[location.Item1, location.Item2] != 'x' && board[location.Item1, location.Item2] != 'o')
-                return true;
-            return false;
-        }
-
+        // Paint the panel (Draw the board).
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -138,9 +147,9 @@ namespace TicTacToe
             g.DrawLine(blackpen, new Point(top_left.X - offset, top_left.Y), new Point(top_right.X + offset, top_right.Y));
             g.DrawLine(blackpen, new Point(bottom_left.X - offset, bottom_left.Y), new Point(bottom_right.X + offset, bottom_right.Y));
 
-            Debug.WriteLine("DRAWING: WIN " + node.justWon() + " WIN? " + node.justWon(false) + " Game over? " + node.gameOver());
-
             drawBoard(node.board, g);
+
+            // If the user just won, ask if they want to play again.
             string text = "";
             if (node.justWon() || node.justWon(false) || node.gameOver())
             {

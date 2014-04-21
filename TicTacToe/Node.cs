@@ -16,12 +16,11 @@ namespace TicTacToe
         public bool min; // Represents whether or not the node is for min or max.
         public int? alphaBeta;
         public int numGeneratedDescendants = 0;
-        private bool treatAsRoot;
 
         public delegate bool betterDelType(int? otherAlphaBeta);
         public static bool debugging = false;
-        public static int nodesVisited = 0;
-        public static int depthLimit = -1;
+        public static int nodesVisited = 0; // A counter for the number of nodes visited during a particular search.
+        public static int depthLimit = -1; // -1 represents no limit.
 
         public Node()
         {
@@ -34,28 +33,29 @@ namespace TicTacToe
                 }
             }
             parent = null;
-            treatAsRoot = true;
         }
 
         public Node(char[,] currentBoard)
         {
             // Instantiate a node
             board = currentBoard;
-            //I assume player  controlling x is trying to maximize
-            
+            //I assume player controlling x is trying to maximize
         }
 
+        // returns a delegate that can be used if a given value is better than the current alpha beta value.
         private betterDelType better
         {
+            // Jason's delegates
             get
             {
                 betterDelType b;
-                if (xToMove()) b = x => (alphaBeta == null)? true : x > alphaBeta;
+                if (xToMove()) b = x => (alphaBeta == null) ? true : x > alphaBeta;
                 else b = x => (alphaBeta == null) ? true : x < alphaBeta;
                 return b;
             }
         }
 
+        // Display this Node's board state and heuristic value, if debugging is enabled.
         void debugDisplayNode()
         {
             if (debugging)
@@ -98,26 +98,27 @@ namespace TicTacToe
             
         }
 
+        // This function accepts the player's move, and then calculates the computer's response.
         public Node playerMove(int col, int row, int depth = 9)
         {
             nodesVisited = 0;
             generateChildren();
             Node newNode = children.Where(x => x.board[col, row] == (xToMove() ? 'x' : 'o')).First();
-            newNode.treatAsRoot = true;
             if (newNode.gameOver()) return newNode;
 
             return newNode.computerMove(depthLimit);
         }
 
+        // This function calculates the computer's move.
         public Node computerMove(int depth)
         {
             setAlphaBetas(depth);
             Node newNode = selectBestChild();
-            newNode.treatAsRoot = true;
             showOptimalPath();
             return newNode;
         }
 
+        // This funciton displays the trace. (The best path chosen)
         void showOptimalPath()
         {
             Node currentNode = this;
@@ -129,6 +130,7 @@ namespace TicTacToe
             }
         }
 
+        // This function selects the Min or Max child, based upon the alpha/beta/heuristic values.
         private Node selectBestChild()
         {
             Node newNode;
@@ -149,6 +151,7 @@ namespace TicTacToe
             return newNode;
         }
 
+        // This checks to see if the game is over. (Cat's game or a win)
         public bool gameOver()
         {
             bool boardFilled =
@@ -165,6 +168,7 @@ namespace TicTacToe
             nodesVisited++;
         }
 
+        // This function generates all the possible children for this node.
         private void generateChildren()
         {
             children = new List<Node>();
@@ -178,7 +182,6 @@ namespace TicTacToe
                         Node newChild = CreateCopy();
                         newChild.board[i, j] = newChild.xToMove() ? 'x' : 'o';
                         newChild.parent = this;
-                        newChild.treatAsRoot = false;
                         //newChild.alphaBeta = -1;
                         children.Add(newChild);
                     }
@@ -186,6 +189,7 @@ namespace TicTacToe
             }   
         }
 
+        // This function checks to see if this is an empty space.
         private bool spaceUnused(int col, int row)
         {
             return !(board[col, row] == 'x' || board[col, row] == 'o');
@@ -201,6 +205,7 @@ namespace TicTacToe
             return new Node(copy);
         }
 
+        // Is it X's turn?
         public bool xToMove()
         {
             int numX = 0;
@@ -214,7 +219,7 @@ namespace TicTacToe
             return !(numX > numO);
         }
 
-        //Heuristic is inspired by lexicographical orderings
+        // Heuristic is inspired by lexicographical orderings
         public int getHeuristic()
         {
             return
@@ -222,16 +227,20 @@ namespace TicTacToe
                 + 900 * numberOfWinDirectionsWithExactly(2, true) - 900 * numberOfWinDirectionsWithExactly(2, false);
         }
 
+        // Has X won the game?
         bool xWon()
         {
             return numberOfWinDirectionsWithExactly(3, true) > 0;
         }
 
+        // Has Y won the game?
         bool oWon()
         {
             return numberOfWinDirectionsWithExactly(3, false) > 0;
         }
 
+        // This function checks the vertical, horizantal, and diagonal directions for a specific number (num) of
+        // Xs or Os in a row (or separated by a blank space)
         public int numberOfWinDirectionsWithExactly(int num, bool playerX)
         {
             int returnVal = 0;
@@ -250,6 +259,8 @@ namespace TicTacToe
                 (numberOfHorizontalsWithExactly(3, forLastPlayerToMove) >= 1);
         }
 
+        // Checks the diagonal lines for a specific number (num) of
+        // Xs or Os in a row (or separated by a blank space)
         public int numberOfDiagonalsWithExactly(int num, bool forLastPlayerToMove = true)
         {
             char testChar = justMovedChar(forLastPlayerToMove);
@@ -267,6 +278,8 @@ namespace TicTacToe
                 ((inARow2 == num) ? 1 : 0);
         }
 
+        // Checks the vertical lines for a specific number (num) of
+        // Xs or Os in a row (or separated by a blank space)
         public int numberOfVerticalsWithExactly(int num, bool forLastPlayerToMove = true)
         {
             int returnVal = 0;
@@ -286,6 +299,8 @@ namespace TicTacToe
             return returnVal;
         }
 
+        // Checks the horizontal lines for a specific number (num) of
+        // Xs or Os in a row (or separated by a blank space)
         public int numberOfHorizontalsWithExactly(int num, bool forLastPlayerToMove = true)
         {
             int returnVal = 0;
@@ -305,6 +320,8 @@ namespace TicTacToe
             return returnVal;
         }
         
+        // Get the last character representation of the player that just played.
+        // Pass it false to reverse the character (x to o) (o to x)
         public char justMovedChar(bool forLastPlayerToMove = true)
         {
             bool x;
