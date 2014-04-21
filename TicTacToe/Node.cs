@@ -82,16 +82,17 @@ namespace TicTacToe
 
                     //If this is the last layer to do stuff with then we should
                     //set the alpha/beta to the heuristic value
-                    if(depth == 1 || gameOver()) c.updateAlphaBeta(c.getHeuristic());
+                    if(depth == 1 || gameOver()) c.updateMinMax(c.getHeuristic());
                     //otherwise recursively call setAlphaBetas on children with a decreased value of depth
                     else c.setAlphaBetas(depth - 1);
                 }
+                alphaBeta = selectBestChild().alphaBeta;
             }
-            else updateAlphaBeta(getHeuristic());
+            else updateMinMax(getHeuristic());
             
         }
 
-        public Node playerMove(int col, int row, int depth = 5)
+        public Node playerMove(int col, int row, int depth = 9)
         {
             
             generateChildren();
@@ -108,6 +109,8 @@ namespace TicTacToe
             Node newNode = selectBestChild();
             newNode.treatAsRoot = true;
             showOptimalPath();
+            Debug.WriteLine("**************************");
+            Debug.WriteLine("**************************");
             return newNode;
         }
 
@@ -152,18 +155,9 @@ namespace TicTacToe
         }
 
         //updates nodes alpha/beta and recursively updates parent as necessary.
-        private void updateAlphaBeta(int val)
+        private void updateMinMax(int val)
         {
             alphaBeta = val;
-            bool pbetter = parent.better(alphaBeta);
-            bool pxtomove = parent.xToMove();
-            int? pval = parent.alphaBeta;
-
-            //Recursively update ancestors
-            if (parent != null && !treatAsRoot && parent.better(alphaBeta))
-            {
-                parent.updateAlphaBeta((int)alphaBeta);
-            }
         }
 
         private void generateChildren()
@@ -225,20 +219,12 @@ namespace TicTacToe
 
         bool xWon()
         {
-            if(!xToMove() && justWon() )
-            {
-                return true;
-            }
-            return false;
+            return numberOfWinDirectionsWithExactly(3, true) > 0;
         }
 
         bool oWon()
         {
-            if(xToMove() && justWon())
-            {
-                return true;
-            }
-            return false;
+            return numberOfWinDirectionsWithExactly(3, false) > 0;
         }
 
         public int numberOfWinDirectionsWithExactly(int num, bool playerX)
