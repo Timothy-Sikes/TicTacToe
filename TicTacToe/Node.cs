@@ -105,6 +105,25 @@ namespace TicTacToe
         public Node computerMove(int depth)
         {
             setAlphaBetas(depth);
+            Node newNode = selectBestChild();
+            newNode.treatAsRoot = true;
+            showOptimalPath();
+            return newNode;
+        }
+
+        void showOptimalPath()
+        {
+            Node currentNode = this;
+            debugDisplayNode();
+            while(currentNode.children != null)
+            {
+                currentNode = currentNode.selectBestChild();
+                currentNode.debugDisplayNode();
+            }
+        }
+
+        private Node selectBestChild()
+        {
             Node newNode;
             if (!xToMove())
             {
@@ -117,14 +136,9 @@ namespace TicTacToe
             {
                 newNode =
                     (from b in children
-                     where b.getHeuristic() == (children.Max(x => x.getHeuristic()))
+                     where b.alphaBeta == (children.Max(x => x.alphaBeta))
                      select b).First();
             }
-            foreach(Node c in children)
-            {
-                c.debugDisplayNode();
-            }
-            newNode.treatAsRoot = true;
             return newNode;
         }
 
