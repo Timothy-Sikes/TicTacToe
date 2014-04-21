@@ -192,10 +192,36 @@ namespace TicTacToe
         public int getHeuristic()
         {
             return
-                (xToMove() ? -1 : 1) *
-                (2700 * (justWon() ? 1 : 0)
-                - 900 * (numberOfDiagonalsWithExactly(2, false) + numberOfHorizontalsWithExactly(2, false) + numberOfVerticalsWithExactly(2, false))
-                + 30 * (numberOfDiagonalsWithExactly(2) + numberOfHorizontalsWithExactly(2) + numberOfVerticalsWithExactly(2)));
+                2700 * (xWon() ? 1 : 0) - 2700 * (oWon() ? 1 : 0)
+                + 900 * numberOfWinDirectionsWithExactly(2, true) - 900 * numberOfWinDirectionsWithExactly(2, false);
+        }
+
+        bool xWon()
+        {
+            if(!xToMove() && justWon() )
+            {
+                return true;
+            }
+            return false;
+        }
+
+        bool oWon()
+        {
+            if(xToMove() && justWon())
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public int numberOfWinDirectionsWithExactly(int num, bool playerX)
+        {
+            int returnVal = 0;
+            bool lastPlayerToMove = playerX && !xToMove() || !playerX && xToMove();
+            returnVal = returnVal + numberOfDiagonalsWithExactly(num, lastPlayerToMove) +
+                numberOfHorizontalsWithExactly(num, lastPlayerToMove) + numberOfVerticalsWithExactly(num, lastPlayerToMove);
+
+            return returnVal;
         }
 
         //Check to see if the player that just moved won
@@ -214,7 +240,9 @@ namespace TicTacToe
             for(int i = 0; i < 3; i++)
             {
                 if (board[i, i] == testChar) inARow1++;
+                else if ( !spaceUnused(i, i) ) inARow1--;
                 if (board[i, 2 - i] == testChar) inARow2++;
+                else if (!spaceUnused(i, 2 - i)) inARow2--;
             }
             return
                 ((inARow1 == num) ? 1 : 0) +
@@ -233,6 +261,7 @@ namespace TicTacToe
                 for(int j = 0; j < 3; j++)
                 {
                     if (board[i, j] == testChar) inARow++;
+                    else if (!spaceUnused(i, j)) inARow--;
                 }
                 if (inARow == num) returnVal++;
             }
@@ -251,6 +280,7 @@ namespace TicTacToe
                 for (int j = 0; j < 3; j++)
                 {
                     if (board[j, i] == testChar) inARow++;
+                    else if (!spaceUnused(i, j)) inARow--;
                 }
                 if (inARow == num) returnVal++;
             }
