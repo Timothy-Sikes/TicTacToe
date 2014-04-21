@@ -40,6 +40,9 @@ namespace TicTacToe
             var selection = getBox(new Point(e.X, e.Y));
             if (validateMove(selection, node.board))
                 node = node.playerMove(selection.Item1, selection.Item2);
+            numNodesLabel.Text = "" + Node.nodesVisited;
+            this.numNodesLabel.Invalidate();
+
             this.panel1.Invalidate();
         }
 
@@ -173,7 +176,7 @@ namespace TicTacToe
         {
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.numNodesLabel = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
@@ -199,14 +202,14 @@ namespace TicTacToe
             this.label1.TabIndex = 1;
             this.label1.Text = "Nodes Generated";
             // 
-            // label2
+            // numNodesLabel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(416, 27);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(13, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "0";
+            this.numNodesLabel.AutoSize = true;
+            this.numNodesLabel.Location = new System.Drawing.Point(416, 27);
+            this.numNodesLabel.Name = "numNodesLabel";
+            this.numNodesLabel.Size = new System.Drawing.Size(13, 13);
+            this.numNodesLabel.TabIndex = 2;
+            this.numNodesLabel.Text = "0";
             // 
             // checkBox1
             // 
@@ -243,7 +246,7 @@ namespace TicTacToe
             this.Controls.Add(this.label3);
             this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.checkBox1);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.numNodesLabel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.panel1);
             this.Name = "Form1";
@@ -258,7 +261,7 @@ namespace TicTacToe
 
         private Panel panel1;
         private Label label1;
-        private Label label2;
+        private Label numNodesLabel;
         private CheckBox checkBox1;
         private NumericUpDown numericUpDown1;
         private Label label3;

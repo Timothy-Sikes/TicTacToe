@@ -20,6 +20,7 @@ namespace TicTacToe
 
         public delegate bool betterDelType(int? otherAlphaBeta);
         public static bool debugging = false;
+        public static int nodesVisited = 0;
 
         public Node()
         {
@@ -98,6 +99,7 @@ namespace TicTacToe
 
         public Node playerMove(int col, int row, int depth = 9)
         {
+            nodesVisited = 0;
             generateChildren();
             Node newNode = children.Where(x => x.board[col, row] == (xToMove() ? 'x' : 'o')).First();
             newNode.treatAsRoot = true;
@@ -159,6 +161,7 @@ namespace TicTacToe
         private void updateMinMax(int val)
         {
             alphaBeta = val;
+            nodesVisited++;
         }
 
         private void generateChildren()
