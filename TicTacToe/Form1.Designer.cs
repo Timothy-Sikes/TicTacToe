@@ -37,13 +37,9 @@ namespace TicTacToe
 
         private void panel1_MouseClick(Object sender, MouseEventArgs e)
         {
-            System.Text.StringBuilder messageBoxCS = new System.Text.StringBuilder();
-            messageBoxCS.Append(getBox(new Point(e.X, e.Y)));
             var selection = getBox(new Point(e.X, e.Y));
-
-            //MessageBox.Show(messageBoxCS.ToString(), "MouseClick Event");
-
-            node = node.playerMove(selection.Item1, selection.Item2);
+            if (validateMove(selection, node.board))
+                node = node.playerMove(selection.Item1, selection.Item2);
             this.panel1.Invalidate();
         }
 
@@ -123,7 +119,7 @@ namespace TicTacToe
 
         private bool validateMove(Tuple<int, int> location, char[,] board)
         {
-            if (board[location.Item1, location.Item2] != 'x' || board[location.Item1, location.Item2] != 'o')
+            if (board[location.Item1, location.Item2] != 'x' && board[location.Item1, location.Item2] != 'o')
                 return true;
             return false;
         }
@@ -142,17 +138,26 @@ namespace TicTacToe
             Debug.WriteLine("DRAWING: WIN " + node.justWon() + " WIN? " + node.justWon(false) + " Game over? " + node.gameOver());
 
             drawBoard(node.board, g);
-            if (node.justWon() || node.justWon(false))
+            string text = "";
+            if (node.justWon() || node.justWon(false) || node.gameOver())
             {
-                string winner = "o";
-                if (node.justWon() && node.justMovedChar() == 'x')
-                    winner = "x";
-                MessageBoxButtons button = MessageBoxButtons.OK;
-                MessageBox.Show(winner + " Wins!", "Game has ended", button);
-            } else if(node.gameOver())
-            {
-                MessageBoxButtons button = MessageBoxButtons.OK;
-                MessageBox.Show("It was a draw!", "Game has ended", button);
+                if (node.justWon() || node.justWon(false))
+                {
+                    string winner = "o";
+                    if (node.justWon() && node.justMovedChar() == 'x')
+                        winner = "x";
+                    text = winner + " Wins!";
+                }
+                else
+                    text = "It was a draw";
+
+                MessageBoxButtons button = MessageBoxButtons.YesNo;
+                DialogResult result = MessageBox.Show(text + "\n Play again?", "Game has ended", button);
+                if (result == DialogResult.Yes)
+                    node = new Node();
+                else
+                    Application.Exit();
+                panel1.Invalidate();
             }
 
             g.Dispose();
