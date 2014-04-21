@@ -70,7 +70,6 @@ namespace TicTacToe
                     Debug.WriteLine("");
                 }
                 Debug.WriteLine("Value: " + alphaBeta);
-                Debug.WriteLine("**************************");
             }
         }
 
@@ -127,6 +126,11 @@ namespace TicTacToe
             {
                 currentNode = currentNode.selectBestChild();
                 currentNode.debugDisplayNode();
+            }
+            if (debugging)
+            {
+                Debug.WriteLine("***************");
+                Debug.WriteLine("***************");
             }
         }
 
