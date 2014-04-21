@@ -106,10 +106,21 @@ namespace TicTacToe
         public Node computerMove(int depth)
         {
             setAlphaBetas(depth);
-            Node newNode =
-                (from b in children
-                 where b.getHeuristic() == (children.Max(x => x.getHeuristic()))
-                 select b).First();
+            Node newNode;
+            if (!xToMove())
+            {
+                newNode =
+                    (from b in children
+                     where b.getHeuristic() == (children.Min(x => x.getHeuristic()))
+                     select b).First();
+            }
+            else
+            {
+                newNode =
+                    (from b in children
+                     where b.getHeuristic() == (children.Max(x => x.getHeuristic()))
+                     select b).First();
+            }
             foreach(Node c in children)
             {
                 c.debugDisplayNode();
