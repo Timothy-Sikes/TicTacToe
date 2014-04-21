@@ -171,14 +171,17 @@ namespace TicTacToe
         }
 
         //Check to see if the player that just moved won
-        public bool justWon()
+        public bool justWon(bool forLastPlayerToMove = true)
         {
-            return (numberOfDiagonalsWithExactly(3) >= 1) || (numberOfVerticalsWithExactly(3) >= 1) || (numberOfHorizontalsWithExactly(3) >= 1);
+            return (numberOfDiagonalsWithExactly(3, forLastPlayerToMove) >= 1) || 
+                (numberOfVerticalsWithExactly(3, forLastPlayerToMove) >= 1) || 
+                (numberOfHorizontalsWithExactly(3, forLastPlayerToMove) >= 1);
         }
 
         public int numberOfDiagonalsWithExactly(int num, bool forLastPlayerToMove = true)
         {
-            char testChar = justMovedChar();
+            char testChar = justMovedChar(forLastPlayerToMove);
+            
             int inARow1, inARow2; inARow1 = inARow2 = 0;
             for(int i = 0; i < 3; i++)
             {
@@ -193,7 +196,7 @@ namespace TicTacToe
         public int numberOfVerticalsWithExactly(int num, bool forLastPlayerToMove = true)
         {
             int returnVal = 0;
-            char testChar = justMovedChar();
+            char testChar = justMovedChar(forLastPlayerToMove);
 
             int inARow;
             for(int i = 0; i < 3; i++)
@@ -211,8 +214,7 @@ namespace TicTacToe
         public int numberOfHorizontalsWithExactly(int num, bool forLastPlayerToMove = true)
         {
             int returnVal = 0;
-
-            char testChar = justMovedChar();
+            char testChar = justMovedChar(forLastPlayerToMove);
 
             int inARow;
             for (int i = 0; i < 3; i++)
@@ -227,7 +229,7 @@ namespace TicTacToe
             return returnVal;
         }
         
-        private char justMovedChar(bool forLastPlayerToMove = true)
+        public char justMovedChar(bool forLastPlayerToMove = true)
         {
             char testChar;
             if (!xToMove() && forLastPlayerToMove) testChar = 'x';
