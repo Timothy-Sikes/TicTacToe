@@ -19,7 +19,7 @@ namespace TicTacToe
         private bool treatAsRoot;
 
         public delegate bool betterDelType(int? otherAlphaBeta);
-        public bool debugging = true;
+        public static bool debugging = false;
 
         public Node()
         {
@@ -56,16 +56,20 @@ namespace TicTacToe
 
         void debugDisplayNode()
         {
-            Debug.WriteLine("------------------");
-            for(int col = 0; col < 3; col++)
+            if (debugging)
             {
-                for(int row = 0; row < 3; row++)
+                Debug.WriteLine("------------------");
+                for (int col = 0; col < 3; col++)
                 {
-                    Debug.Write(board[row, col]);
+                    for (int row = 0; row < 3; row++)
+                    {
+                        Debug.Write(board[row, col]);
+                    }
+                    Debug.WriteLine("");
                 }
-                Debug.WriteLine("");
+                Debug.WriteLine("Value: " + alphaBeta);
+                Debug.WriteLine("**************************");
             }
-            Debug.WriteLine("Value: " + alphaBeta);
         }
 
         //Delves down to a depth of "depth" to set aplha/beta values
@@ -94,7 +98,6 @@ namespace TicTacToe
 
         public Node playerMove(int col, int row, int depth = 9)
         {
-            
             generateChildren();
             Node newNode = children.Where(x => x.board[col, row] == (xToMove() ? 'x' : 'o')).First();
             newNode.treatAsRoot = true;
@@ -109,8 +112,6 @@ namespace TicTacToe
             Node newNode = selectBestChild();
             newNode.treatAsRoot = true;
             showOptimalPath();
-            Debug.WriteLine("**************************");
-            Debug.WriteLine("**************************");
             return newNode;
         }
 

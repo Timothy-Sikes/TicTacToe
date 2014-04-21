@@ -18,7 +18,7 @@ namespace TicTacToe
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-
+            Node.debugging = checkBox1.Checked;
         }
     }
 }
