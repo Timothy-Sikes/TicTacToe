@@ -214,7 +214,7 @@ namespace TicTacToe
             for(int i = 0; i < 3; i++)
             {
                 if (board[i, i] == testChar) inARow1++;
-                if (board[2 - i, 2 - i] == testChar) inARow2++;
+                if (board[i, 2 - i] == testChar) inARow2++;
             }
             return
                 ((inARow1 == num) ? 1 : 0) +
