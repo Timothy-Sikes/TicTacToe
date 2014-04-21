@@ -47,14 +47,9 @@ namespace TicTacToe
         {
             get
             {
-                if (treatAsRoot) return x => true;
-
-                betterDelType b = x => false;
-                if(better == null)
-                {
-                    if (xToMove()) b = x => x > alphaBeta;
-                    else b = x => x < alphaBeta;
-                }
+                betterDelType b;
+                if (xToMove()) b = x => x > alphaBeta;
+                else b = x => x < alphaBeta;
                 return b;
             }
         }
@@ -76,19 +71,23 @@ namespace TicTacToe
         //Delves down to a depth of "depth" to set aplha/beta values
         public void setAlphaBetas(int depth)
         {
-            if (!(depth == 0 || justWon())) generateChildren();
-            foreach(Node c in children)
+            if (!(depth == 0 || gameOver()))
             {
-                //Once the current node becomes an unfeasible choice for its parent then we no longer
-                //need to do update alpha/betas. This is the alpha beta pruning bit
-                //if( !parent.better(alphaBeta) ) return;
+                generateChildren();
+                foreach(Node c in children)
+                {
+                    //Once the current node becomes an unfeasible choice for its parent then we no longer
+                    //need to do update alpha/betas. This is the alpha beta pruning bit
+                    //if( !parent.better(alphaBeta) ) return;
 
-                //If this is the last layer to do stuff with then we should
-                //set the alpha/beta to the heuristic value
-                if(depth == 1 || justWon()) c.updateAlphaBeta(c.getHeuristic());
-                //otherwise recursively call setAlphaBetas on children with a decreased value of depth
-                else setAlphaBetas(depth - 1);
+                    //If this is the last layer to do stuff with then we should
+                    //set the alpha/beta to the heuristic value
+                    if(depth == 1 || gameOver()) c.updateAlphaBeta(c.getHeuristic());
+                    //otherwise recursively call setAlphaBetas on children with a decreased value of depth
+                    else c.setAlphaBetas(depth - 1);
+                }
             }
+            else updateAlphaBeta(getHeuristic());
             
         }
 
@@ -142,11 +141,13 @@ namespace TicTacToe
         private void updateAlphaBeta(int val)
         {
             alphaBeta = val;
+            bool pbetter = parent.better(alphaBeta);
+            bool pxtomove = parent.xToMove();
+            int pval = parent.alphaBeta;
 
             //Recursively update ancestors
-            if (parent != null && parent.better(alphaBeta))
+            if (parent != null && !treatAsRoot && parent.better(alphaBeta))
             {
-                parent.alphaBeta = alphaBeta;
                 parent.updateAlphaBeta(alphaBeta);
             }
         }
@@ -165,6 +166,7 @@ namespace TicTacToe
                         newChild.board[i, j] = newChild.xToMove() ? 'x' : 'o';
                         newChild.parent = this;
                         newChild.treatAsRoot = false;
+                        newChild.alphaBeta = -1;
                         children.Add(newChild);
                     }
                 }
