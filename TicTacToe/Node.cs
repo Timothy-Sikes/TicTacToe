@@ -21,6 +21,7 @@ namespace TicTacToe
         public delegate bool betterDelType(int? otherAlphaBeta);
         public static bool debugging = false;
         public static int nodesVisited = 0;
+        public static int depthLimit = -1;
 
         public Node()
         {
@@ -105,7 +106,7 @@ namespace TicTacToe
             newNode.treatAsRoot = true;
             if (newNode.gameOver()) return newNode;
 
-            return newNode.computerMove(depth);
+            return newNode.computerMove(depthLimit);
         }
 
         public Node computerMove(int depth)

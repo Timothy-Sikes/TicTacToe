@@ -20,5 +20,13 @@ namespace TicTacToe
         {
             Node.debugging = checkBox1.Checked;
         }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            int val = (int)numericUpDown1.Value;
+            if (val == 0)
+                val--;
+            Node.depthLimit = val;
+        }
     }
 }
